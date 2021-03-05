@@ -19,9 +19,10 @@ public class UserController {
 
     @PostMapping
     @Transactional
-    public void store(@Valid @RequestBody UserRequest request) {
+    public String store(@Valid @RequestBody UserRequest request) {
         User user = request.toModel(request.getEmail(), request.getPassword());
         em.persist(user);
+        return user.toString();
     }
 
 }

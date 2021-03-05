@@ -1,13 +1,11 @@
 package br.com.zup.mercadolivre.user;
 
-import br.com.zup.mercadolivre.shared.validations.NotFuture;
 import br.com.zup.mercadolivre.shared.validations.UniqueField;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.time.LocalDateTime;
 
 public class UserRequest {
     @NotBlank
@@ -41,6 +39,6 @@ public class UserRequest {
 //    }
 
     public User toModel(String email, String password) {
-        return new User(email, password);
+        return new User(email, BCrypt.hashpw(password, BCrypt.gensalt()));
     }
 }
