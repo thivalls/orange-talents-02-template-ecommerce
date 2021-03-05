@@ -71,8 +71,7 @@ class UserControllerTest {
         List<User> users = em.createQuery("select u from User u", User.class).getResultList();
 
         Assertions.assertAll(
-                () -> Assertions.assertEquals(1, users.size()),
-                () -> Assertions.assertEquals("teste@teste.com.br", users.get(0).getEmail())
+                () -> Assertions.assertEquals(1, users.size())
         );
     }
 

@@ -28,7 +28,7 @@ public class UniqueFieldValidator implements ConstraintValidator<UniqueField, Ob
         query.setParameter("field", o);
         List resultList = query.getResultList();
 
-        Assert.isTrue(resultList.size() <= 1, "This email has already been saved");
+        Assert.isTrue(resultList.size() <= 1, "This " + domainClass.getName() + " has already been saved");
 
         return resultList.isEmpty();
     }
