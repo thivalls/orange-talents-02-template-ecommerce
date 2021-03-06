@@ -18,6 +18,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/*/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/users").permitAll()
                 .antMatchers(HttpMethod.POST, "/categories").permitAll()
+                .antMatchers(HttpMethod.POST, "/products").permitAll()
                 .anyRequest().authenticated()
                 .and().csrf().disable();
     }
