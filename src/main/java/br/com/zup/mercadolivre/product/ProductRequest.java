@@ -32,7 +32,7 @@ public class ProductRequest {
     private int quantity;
 
     @Size(min = 3)
-    private Set<ProductFeature> features = new HashSet<>();
+    private List<ProductFeatureRequest> features = new ArrayList<>();
 
     @NotNull
     @ExistField(domainClass = Category.class, fieldName = "id", message = "This category does not exist")
@@ -42,22 +42,65 @@ public class ProductRequest {
     @Length(max = 1000)
     private String description;
 
-    @NotNull
-    @Valid
-    private User owner;
-
-    public ProductRequest(@NotBlank String name, @NotNull @PositiveOrZero BigDecimal price, @PositiveOrZero Integer quantity, @Size(min = 3) Set<ProductFeature> features, @NotNull Long categoria, @NotBlank @Length(max = 1000) String description, @NotNull @Valid User owner) {
+    public ProductRequest(@NotBlank String name, @NotNull @Positive BigDecimal price, @Positive int quantity, @Size(min = 3) List<ProductFeatureRequest> features, @NotNull Long categoria, @NotBlank @Length(max = 1000) String description) {
         this.name = name;
         this.price = price;
         this.quantity = quantity;
         this.features = features;
         this.categoria = categoria;
         this.description = description;
-        this.owner = owner;
     }
 
-    public Product toModel(EntityManager em, User loggedUser) {
+    public Product toModel(EntityManager em, User owner) {
         Category category = em.find(Category.class, categoria);
-        return new Product(name, price, quantity, features, description, category, owner);
+        return new Product(name, price, quantity, description, category, owner, features);
+    }
+
+    @Override
+    public String toString() {
+        return "ProductRequest{" +
+                "name='" + name + '\'' +
+                ", price=" + price +
+                ", quantity=" + quantity +
+                ", features=" + features +
+                ", categoria=" + categoria +
+                ", description='" + description + '\'' +
+                '}';
+    }
+
+    public Set<String> searchEqualsFeatures() {
+        HashSet<String> testAddingEqualsName = new HashSet<>();
+        HashSet<String> equalsResults = new HashSet<>();
+        for (ProductFeatureRequest feature : features) {
+            String featureName = feature.getName();
+            if (!testAddingEqualsName.add(featureName)) {
+                equalsResults.add(featureName);
+            }
+        }
+        return equalsResults;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public List<ProductFeatureRequest> getFeatures() {
+        return features;
+    }
+
+    public Long getCategoria() {
+        return categoria;
     }
 }
