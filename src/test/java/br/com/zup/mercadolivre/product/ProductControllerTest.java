@@ -28,13 +28,13 @@ class ProductControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Test
-    void deveEncontrarRotaPostProducts() throws Exception {
-        ProductRequest product = new ProductRequest();
-        mockMvc.perform(
-                MockMvcRequestBuilders.post("/products")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(product))
-        ).andExpect(MockMvcResultMatchers.status().isOk());
-    }
+//    @Test
+//    void deveEncontrarRotaPostProducts() throws Exception {
+//        ProductRequest product = new ProductRequest();
+//        mockMvc.perform(
+//                MockMvcRequestBuilders.post("/products")
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content(objectMapper.writeValueAsString(product))
+//        ).andExpect(MockMvcResultMatchers.status().isOk());
+//    }
 }
