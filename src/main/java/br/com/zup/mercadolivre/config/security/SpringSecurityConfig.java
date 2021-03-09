@@ -19,6 +19,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/users").permitAll()
                 .antMatchers(HttpMethod.POST, "/categories").permitAll()
                 .antMatchers(HttpMethod.POST, "/products").permitAll()
+                .antMatchers(HttpMethod.POST, "/products/{id}/images").permitAll()
                 .anyRequest().authenticated()
                 .and().csrf().disable();
     }

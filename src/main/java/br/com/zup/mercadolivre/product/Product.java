@@ -5,6 +5,7 @@ import br.com.zup.mercadolivre.user.User;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,10 +13,12 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.HashSet;
@@ -25,7 +28,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
-@Table(name = "products")
+@Table(
+        name = "products",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uniqueProductNameAuthor", columnNames = {"name", "owner_id"})
+        }
+)
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,6 +64,13 @@ public class Product {
     @ManyToOne
     private User owner;
 
+    @OneToMany(mappedBy = "product", cascade = CascadeType.MERGE)
+    private Set<ImageProduct> images = new HashSet<>();
+
+    @Deprecated
+    public Product() {
+    }
+
     public Product(@NotBlank String name, @NotNull BigDecimal price, @NotBlank @PositiveOrZero Integer quantity, @NotBlank @Length(max = 1000) String description, @NotNull Category categoria, @NotNull @Valid User owner, Collection<ProductFeatureRequest> featureCollection) {
         this.name = name;
         this.price = price;
@@ -65,6 +80,11 @@ public class Product {
         this.owner = owner;
         this.features.addAll(featureCollection.stream().map(feature -> feature.toModel(this)).collect(Collectors.toSet()));
         featureCollection.stream().map(feature -> feature.toModel(this));
+    }
+
+    public void appendImages(Set<String> imageLinks) {
+        Set<ImageProduct> allImageLinks = imageLinks.stream().map(link -> new ImageProduct(this, link)).collect(Collectors.toSet());
+        this.images.addAll(allImageLinks);
     }
 
     @Override
@@ -78,6 +98,7 @@ public class Product {
                 ", description='" + description + '\'' +
                 ", categoria=" + categoria +
                 ", owner=" + owner +
+                ", images=" + images +
                 '}';
     }
 

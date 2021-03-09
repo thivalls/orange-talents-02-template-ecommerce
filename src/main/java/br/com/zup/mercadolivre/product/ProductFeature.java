@@ -27,10 +27,22 @@ public class ProductFeature {
     @ManyToOne
     private Product product;
 
+    @Deprecated
+    public ProductFeature() {
+    }
+
     public ProductFeature(@NotBlank String name, @NotBlank String description, @NotNull @Valid Product product) {
         this.name = name;
         this.description = description;
         this.product = product;
+    }
+
+    @Override
+    public String toString() {
+        return "ProductFeature{" +
+                "name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                '}';
     }
 
     @Override
