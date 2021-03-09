@@ -61,9 +61,14 @@ public class ProductController {
          * 5) Atualizar o produto com as imagens
          */
 
-        Set<String> imageLinks = uploadFile.upload(request.getImages());
+        Optional<User> loggedUser = userRepository.findByEmail("admin@email.com");
         Product product = em.find(Product.class, id);
+
+        Set<String> imageLinks = uploadFile.upload(request.getImages());
         product.appendImages(imageLinks);
+        if(!product.checkOwner(loggedUser.get())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
         em.merge(product);
         return product.toString();
     }

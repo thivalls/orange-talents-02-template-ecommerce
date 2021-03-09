@@ -114,4 +114,8 @@ public class Product {
     public int hashCode() {
         return Objects.hash(name, owner);
     }
+
+    public boolean checkOwner(User loggedUser) {
+        return this.owner.equals(loggedUser);
+    }
 }
