@@ -8,8 +8,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 
-@EnableWebSecurity
 @Configuration
+@EnableWebSecurity
 //@Profile()
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
@@ -20,6 +20,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/categories").permitAll()
                 .antMatchers(HttpMethod.POST, "/products").permitAll()
                 .antMatchers(HttpMethod.POST, "/products/{id}/images").permitAll()
+                .antMatchers(HttpMethod.POST, "/products/{id}/opinion").permitAll()
                 .anyRequest().authenticated()
                 .and().csrf().disable();
     }
