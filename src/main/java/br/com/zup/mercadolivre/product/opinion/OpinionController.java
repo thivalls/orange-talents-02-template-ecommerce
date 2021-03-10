@@ -29,14 +29,14 @@ public class OpinionController {
 
     @PostMapping("/{id}/opinion")
     @Transactional
-    public String store(@PathVariable("id") Long id, @RequestBody @Valid OpinionRequest request) {
+    public void store(@PathVariable("id") Long id, @RequestBody @Valid OpinionRequest request) {
         Optional<User> loggedUser = userRepository.findByEmail("admin1@email.com");
         if(!loggedUser.isPresent()) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
 
         Product product = em.find(Product.class, id);
         if(product == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
 
-        Opinion opinion = request.toModel(em, loggedUser.get(), product);
+        Opinion opinion = request.toModel(loggedUser.get(), product);
         em.persist(opinion);
     }
 

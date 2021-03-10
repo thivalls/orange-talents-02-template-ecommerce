@@ -82,6 +82,14 @@ public class Product {
         featureCollection.stream().map(feature -> feature.toModel(this));
     }
 
+    public User getOwner() {
+        return owner;
+    }
+
+    public String getName() {
+        return name;
+    }
+
     public void appendImages(Set<String> imageLinks) {
         Set<ImageProduct> allImageLinks = imageLinks.stream().map(link -> new ImageProduct(this, link)).collect(Collectors.toSet());
         this.images.addAll(allImageLinks);

@@ -4,7 +4,6 @@ import br.com.zup.mercadolivre.product.Product;
 import br.com.zup.mercadolivre.user.User;
 import org.hibernate.validator.constraints.Length;
 
-import javax.persistence.EntityManager;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
@@ -36,7 +35,7 @@ public class OpinionRequest {
                 '}';
     }
 
-    public Opinion toModel(EntityManager em, User loggedUser, Product product) {
+    public Opinion toModel(User loggedUser, Product product) {
         return new Opinion(review, title, description, loggedUser, product);
     }
 }
