@@ -1,6 +1,8 @@
 package br.com.zup.mercadolivre.product;
 
 import br.com.zup.mercadolivre.category.Category;
+import br.com.zup.mercadolivre.product.detail.ProductDetailResponse;
+import br.com.zup.mercadolivre.product.detail.ProductDetailResponseFeature;
 import br.com.zup.mercadolivre.product.opinion.Opinion;
 import br.com.zup.mercadolivre.product.question.Question;
 import br.com.zup.mercadolivre.user.User;
@@ -27,6 +29,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Entity
@@ -137,6 +140,14 @@ public class Product {
     public void appendImages(Set<String> imageLinks) {
         Set<ImageProduct> allImageLinks = imageLinks.stream().map(link -> new ImageProduct(this, link)).collect(Collectors.toSet());
         this.images.addAll(allImageLinks);
+    }
+
+    public <T> Set<T> collectFeatures(Function<ProductFeature, T> collectFeaturesFunction) {
+        return this.features.stream().map(collectFeaturesFunction).collect(Collectors.toSet());
+    }
+
+    public <T> Set<T> collectImages(Function<ImageProduct, T> collectImagesFunction) {
+        return this.images.stream().map(collectImagesFunction).collect(Collectors.toSet());
     }
 
     @Override

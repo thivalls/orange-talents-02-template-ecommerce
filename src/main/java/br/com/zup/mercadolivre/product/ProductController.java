@@ -1,5 +1,6 @@
 package br.com.zup.mercadolivre.product;
 
+import br.com.zup.mercadolivre.product.detail.ProductDetailResponse;
 import br.com.zup.mercadolivre.shared.upload.UploadFile;
 import br.com.zup.mercadolivre.user.User;
 import br.com.zup.mercadolivre.user.UserRepository;
@@ -73,12 +74,12 @@ public class ProductController {
 
     @GetMapping("/{id}")
     @Transactional(readOnly = true)
-    public ProductDetail show(@PathVariable("id") Long id) {
+    public ProductDetailResponse show(@PathVariable("id") Long id) {
         Product product = em.find(Product.class, id);
         if (product == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        ProductDetail productDetail = new ProductDetail(product);
-        return productDetail;
+        ProductDetailResponse productDetailResponse = new ProductDetailResponse(product);
+        return productDetailResponse;
     }
 }
