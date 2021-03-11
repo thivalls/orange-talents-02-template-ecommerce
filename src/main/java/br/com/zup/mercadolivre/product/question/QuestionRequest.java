@@ -22,7 +22,7 @@ public class QuestionRequest {
         return new Question(title, owner, product);
     }
 
-    public String getTitle() {
-        return title;
+    public void setTitle(String title) {
+        this.title = title;
     }
 }

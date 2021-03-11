@@ -54,4 +54,12 @@ public class Question {
                 ", product=" + product +
                 '}';
     }
+
+    public User getOwner() {
+        return owner;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
 }
