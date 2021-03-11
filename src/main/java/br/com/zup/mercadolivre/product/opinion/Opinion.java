@@ -41,12 +41,20 @@ public class Opinion {
     @ManyToOne
     private Product product;
 
+    @Deprecated
+    public Opinion() {
+    }
+
     public Opinion(@Positive @Max(value = 5) int review, @NotBlank String title, @NotBlank @Length(max = 500) String description, @NotNull User owner, @NotNull Product product) {
         this.review = review;
         this.title = title;
         this.description = description;
         this.owner = owner;
         this.product = product;
+    }
+
+    public int getReview() {
+        return review;
     }
 
     @Override

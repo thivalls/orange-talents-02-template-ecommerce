@@ -35,6 +35,10 @@ public class Question {
     @ManyToOne
     private Product product;
 
+    @Deprecated
+    public Question() {
+    }
+
     public Question(@NotBlank String title, @NotNull User owner, @NotNull Product product) {
         Assert.isTrue(title.length() > 0, "The title can not be empty");
         Assert.isTrue(owner != null, "The user is required and can not be null");

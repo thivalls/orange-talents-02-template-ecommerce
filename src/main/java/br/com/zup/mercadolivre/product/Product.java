@@ -1,6 +1,8 @@
 package br.com.zup.mercadolivre.product;
 
 import br.com.zup.mercadolivre.category.Category;
+import br.com.zup.mercadolivre.product.opinion.Opinion;
+import br.com.zup.mercadolivre.product.question.Question;
 import br.com.zup.mercadolivre.user.User;
 import org.hibernate.validator.constraints.Length;
 
@@ -67,6 +69,12 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.MERGE)
     private Set<ImageProduct> images = new HashSet<>();
 
+    @OneToMany(mappedBy = "product")
+    private List<Question> questions;
+
+    @OneToMany(mappedBy = "product")
+    private List<Opinion> opinions;
+
     @Deprecated
     public Product() {
     }
@@ -82,12 +90,48 @@ public class Product {
         featureCollection.stream().map(feature -> feature.toModel(this));
     }
 
-    public User getOwner() {
-        return owner;
+    public Long getId() {
+        return id;
     }
 
     public String getName() {
         return name;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public Set<ProductFeature> getFeatures() {
+        return features;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public Category getCategoria() {
+        return categoria;
+    }
+
+    public User getOwner() {
+        return owner;
+    }
+
+    public List<Question> getQuestions() {
+        return questions;
+    }
+
+    public List<Opinion> getOpinions() {
+        return opinions;
+    }
+
+    public Set<ImageProduct> getImages() {
+        return images;
     }
 
     public void appendImages(Set<String> imageLinks) {

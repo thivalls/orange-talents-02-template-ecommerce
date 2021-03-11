@@ -45,7 +45,13 @@ public class QuestionController {
         Question question = request.toModel(ownerQuestion.get(), product);
         try {
             em.persist(question);
-            emailService.send("Ei, " + question.getProduct().getOwner().getEmail() + " a new question has been created for product " + product.getName() + " do not forget to check it out!", "Nova questão", question.getOwner().getEmail(), "server@mailtrap.io", product.getOwner().getEmail());
+            emailService.send(
+                    "Ei, " + question.getProduct().getOwner().getEmail() + " a new question has been created for product " + product.getName() + " do not forget to check it out!",
+                    "Nova questão",
+                    question.getOwner().getEmail(),
+                    "server@mailtrap.io",
+                    product.getOwner().getEmail()
+            );
         } catch (Exception e) {
             System.out.println(e);
         }
