@@ -1,10 +1,9 @@
 package br.com.zup.mercadolivre.category;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -14,18 +13,14 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.transaction.Transactional;
-import java.util.List;
 
-@AutoConfigureMockMvc
-@AutoConfigureTestDatabase()
 @SpringBootTest
+@AutoConfigureMockMvc
 @ActiveProfiles("test")
+@Transactional
 class CategoryControllerTest {
-
-    @PersistenceContext
-    private EntityManager em;
 
     @Autowired
     private MockMvc mockMvc;
@@ -33,62 +28,67 @@ class CategoryControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-//    @Test
-//    @Transactional
-//    void deveCadastrarNovaCategoria() throws Exception {
-//        CategoryRequest category = new CategoryRequest("Nova categoria teste", 1l);
-//        mockMvc.perform(
-//                MockMvcRequestBuilders.post("/categories")
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(objectMapper.writeValueAsString(category))
-//        ).andExpect(
-//                MockMvcResultMatchers.status().is(200)
-//        );
-//
-//        List<Category> categories = em.createQuery("select u from Category u", Category.class).getResultList();
-//
-//        Assertions.assertAll(
-//                () -> Assertions.assertEquals(1, categories.size()),
-//                () -> Assertions.assertEquals("Category 1", categories.get(0).getName()),
-//                () -> Assertions.assertEquals("1", categories.get(0).getId())
-//        );
-//    }
+    @Autowired
+    private EntityManager em;
 
-//    @Test
-//    void deveCadastrarNovaCategoriaComCategoriaMae() throws Exception {
-//        CategoryRequest category = new CategoryRequest("Categoryy 1", null);
-//        mockMvc.perform(
-//                MockMvcRequestBuilders.post("/categories")
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(objectMapper.writeValueAsString(user))
-//        ).andExpect(
-//                MockMvcResultMatchers.status().is(200)
-//        );
-//
-//        List<Category> categories = em.createQuery("select u from Category u", Category.class).getResultList();
-//
-//        Assertions.assertAll(
-//                () -> Assertions.assertEquals(1, categories.size()),
-//                () -> Assertions.assertEquals("Category", categories.get(0).getName())
-//        );
-//    }
+    @Test
+    @DisplayName("It should create a new category")
+    void mustCreateNewCategoryWithoutParent() throws Exception {
+        CategoryRequest categoryRequest = new CategoryRequest("Category", null);
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/categories")
+                    .content(objectMapper.writeValueAsString(categoryRequest))
+                    .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(MockMvcResultMatchers.status().isOk());
+    }
 
-//    @Test
-//    void naoDeveCadastrarNovoUsuarioComEmailRepetido() throws Exception {
-//        UserRequest user = new UserRequest("teste@teste.com.br", "123456");
-//        mockMvc.perform(
-//                MockMvcRequestBuilders.post("/users")
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(objectMapper.writeValueAsString(user))
-//        ).andExpect(
-//                MockMvcResultMatchers.status().is(200)
-//        );
-//
-//        List<User> users = em.createQuery("select u from User u", User.class).getResultList();
-//
-//        Assertions.assertAll(
-//                () -> Assertions.assertEquals(1, users.size())
-//        );
-//    }
+    @Test
+    @DisplayName("It should not create a new category with non existent parent id")
+    void shouldNotCreateNewCategoryWithNonExistentParent() throws Exception {
+        CategoryRequest categoryRequest = new CategoryRequest("Esporte", 1L);
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/categories")
+                        .content(objectMapper.writeValueAsString(categoryRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
 
+    @Test
+    @DisplayName("It should create a new category with existent parent category")
+    void mustCreateNewCategoryWithExistentParent() throws Exception {
+        CategoryRequest categoryRequest = new CategoryRequest("Esporte", null);
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/categories")
+                        .content(objectMapper.writeValueAsString(categoryRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        Query query = em.createQuery("select c from Category c", Category.class);
+        System.out.println(query.getResultList().size());
+
+        CategoryRequest categoryRequest1 = new CategoryRequest("Futebol", categoryRequest.getCategoryId());
+        System.out.println(categoryRequest1.toString());
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/categories")
+                        .content(objectMapper.writeValueAsString(categoryRequest1))
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    @DisplayName("It should not create a categories with equals name")
+    void mustNotCreateCategoryWithEqualsName() throws Exception {
+        CategoryRequest categoryRequest = new CategoryRequest("Esporte", null);
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/categories")
+                        .content(objectMapper.writeValueAsString(categoryRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/categories")
+                        .content(objectMapper.writeValueAsString(categoryRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
 }

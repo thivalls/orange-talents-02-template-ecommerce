@@ -1,26 +1,32 @@
 package br.com.zup.mercadolivre.category;
 
-import br.com.zup.mercadolivre.user.User;
+import br.com.zup.mercadolivre.product.opinion.Opinion;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class CategoryTest {
     @Test
-    @DisplayName("Deveria criar um usuário sem erros")
-    void deveriaCriarUsuario() {
-        Assertions.assertDoesNotThrow(() -> new User("fulano@email.com", "123456"));
+    @DisplayName("It should create a category without parent category")
+    void mustCreateCategoryWithoutParent() {
+        Assertions.assertDoesNotThrow(() -> new Category("Esporte", null));
     }
 
     @Test
-    @DisplayName("Deveria retornar erro ao passar email nulo")
-    void deveriaRetornarErroAoTentarCriarUsuarioComEmailNulo() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new User(null, "123456"));
+    @DisplayName("It should create a category with parent category")
+    void mustCreateCategoryWithParent() {
+        Assertions.assertDoesNotThrow(() -> new Category("Esporte", new Category("Esporte", null)));
     }
 
     @Test
-    @DisplayName("Não deveria permitir password menores que 6 caracteres")
-    void naoDeveriaPermitirPasswordMenorQue6Caracteres() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new User("fulano@email.come", "12345"));
+    @DisplayName("It should not create a category with null name")
+    void mustNotCreateCategoryWithNullName() {
+        Assertions.assertThrows(IllegalStateException.class, () -> new Category(null, null));
+    }
+
+    @Test
+    @DisplayName("It should not create a category with blank name")
+    void mustNotCreateCategoryWithBlankName() {
+        Assertions.assertThrows(IllegalStateException.class, () -> new Category("", null));
     }
 }

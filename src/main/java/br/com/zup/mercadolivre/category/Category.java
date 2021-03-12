@@ -34,10 +34,8 @@ public class Category {
     }
 
     public Category(@NotBlank String name, Category category) {
-        Assert.notNull(name, "The name of category can not be null");
-        if (category != null) {
-            Assert.isInstanceOf(Category.class, category, "The category object must be an instance of Category Entity");
-        }
+        Assert.state(name != null, "The name of category can not be null");
+        Assert.state(name.length() > 0, "The name of category can not be empty");
         this.name = name;
         this.category = category;
     }
