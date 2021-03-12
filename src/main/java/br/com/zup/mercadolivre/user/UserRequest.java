@@ -17,10 +17,6 @@ public class UserRequest {
     @Size(min = 6)
     private String password;
 
-    // @NotNull
-    // @NotFuture(domainClass = User.class, fieldName = "created_at", message = "The date can not be in the future")
-    // private LocalDateTime created_at;
-
     public UserRequest(@NotBlank @Email String email, @NotBlank @Size String password) {
         this.email = email;
         this.password = password;
@@ -33,10 +29,6 @@ public class UserRequest {
     public String getPassword() {
         return password;
     }
-
-//    public LocalDateTime getCreated_at() {
-//        return created_at;
-//    }
 
     public User toModel(String email, String password) {
         return new User(email, BCrypt.hashpw(password, BCrypt.gensalt()));

@@ -1,26 +1,28 @@
 package br.com.zup.mercadolivre.user;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.List;
+import javax.transaction.Transactional;
 
-@AutoConfigureMockMvc
-@SpringBootTest
+import static org.junit.jupiter.api.Assertions.*;
+
+@SpringBootTest // subir contexto do spring para rodar os testes
+@AutoConfigureMockMvc // Configura o mockmvc para realizar requisições
+@Transactional
+@ActiveProfiles("test") // Usar este H2 em memoria não persiste os dados
+// aplicar context de banco de dados para rodar o rollback
 class UserControllerTest {
-
-    @PersistenceContext
-    private EntityManager em;
 
     @Autowired
     private MockMvc mockMvc;
@@ -29,40 +31,42 @@ class UserControllerTest {
     private ObjectMapper objectMapper;
 
     @Test
-    void deveCadastrarNovoUsuario() throws Exception {
-        UserRequest user = new UserRequest("teste@teste.com.br", "123456");
+    @DisplayName("Deve criar um novo usuário")
+    /**
+     * Lembrar de lançar o exception para eliminar os erros de compilação
+     */
+    void criaUsuario() throws Exception {
+        UserRequest userRequest = new UserRequest("teste@teste.com", "123456");
+        /**
+         * Performe primeiro passo para iniciar o teste
+         *      Informar o MockMvcRequestBuilder para indicar o método
+         *      Informar o content em casos de post
+         *      MediaType contém um ENUM com os tipos aceitos para content types
+         */
         mockMvc.perform(
                 MockMvcRequestBuilders.post("/users")
+                        .content(objectMapper.writeValueAsString(userRequest))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(user))
-        ).andExpect(
-                MockMvcResultMatchers.status().is(200)
-        );
-
-        List<User> users = em.createQuery("select u from User u", User.class).getResultList();
-
-        Assertions.assertAll(
-                () -> Assertions.assertEquals(1, users.size()),
-                () -> Assertions.assertEquals("teste@teste.com.br", users.get(0).getEmail())
-        );
+        ).andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
-    void naoDeveCadastrarNovoUsuarioComEmailRepetido() throws Exception {
-        UserRequest user = new UserRequest("teste@teste.com.br", "123456");
+    @DisplayName("Não deve criar um usuário com email repetido")
+    void uniqueUserByEmail() throws Exception {
+        UserRequest userRequest = new UserRequest("teste@teste.com", "123456");
+        // poderia persistir com Entity Manager
+        // ou criar utilizar o proprio MockMvc
         mockMvc.perform(
                 MockMvcRequestBuilders.post("/users")
+                        .content(objectMapper.writeValueAsString(userRequest))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(user))
-        ).andExpect(
-                MockMvcResultMatchers.status().is(200)
         );
-
-        List<User> users = em.createQuery("select u from User u", User.class).getResultList();
-
-        Assertions.assertAll(
-                () -> Assertions.assertEquals(1, users.size())
-        );
+        
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/users")
+                        .content(objectMapper.writeValueAsString(userRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
 }

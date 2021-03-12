@@ -1,16 +1,10 @@
 package br.com.zup.mercadolivre.product.detail;
 
-import br.com.zup.mercadolivre.product.ImageProduct;
 import br.com.zup.mercadolivre.product.Product;
-import br.com.zup.mercadolivre.product.ProductFeature;
-import br.com.zup.mercadolivre.product.opinion.Opinion;
-import br.com.zup.mercadolivre.product.question.Question;
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class ProductDetailResponse {
     private String name;
@@ -18,7 +12,8 @@ public class ProductDetailResponse {
     private String description;
     private Set<ProductDetailResponseFeature> features;
 
-    private Set<ProductDetailResponseImage> images;
+    private Set<String> images;
+    private Set<ProductDetailResponseOpinion> opinions;
 //    private int totalReviews;
 //    private double averageReviews;
 //
@@ -30,8 +25,8 @@ public class ProductDetailResponse {
         this.price = product.getPrice();
         this.description = product.getDescription();
         this.features = product.collectFeatures(ProductDetailResponseFeature::new);
-        this.images = product.collectImages(ProductDetailResponseImage::new);
-        //this.features = product.getFeatures();
+        this.images = product.collectImages(image -> image.getLink());
+//        this.opinios
 //        this.opnions = product.getOpinions();
 //        this.questions = product.getQuestions();
 //        this.totalReviews = opnions.size();
@@ -54,7 +49,7 @@ public class ProductDetailResponse {
         return features;
     }
 
-    public Set<ProductDetailResponseImage> getImages() {
+    public Set<String> getImages() {
         return images;
     }
 

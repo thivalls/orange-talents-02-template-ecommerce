@@ -142,12 +142,12 @@ public class Product {
         this.images.addAll(allImageLinks);
     }
 
-    public <T> Set<T> collectFeatures(Function<ProductFeature, T> collectFeaturesFunction) {
-        return this.features.stream().map(collectFeaturesFunction).collect(Collectors.toSet());
+    public <T> Set<T> collectFeatures(Function<ProductFeature, T> collectFunction) {
+        return this.features.stream().map(collectFunction).collect(Collectors.toSet());
     }
 
-    public <T> Set<T> collectImages(Function<ImageProduct, T> collectImagesFunction) {
-        return this.images.stream().map(collectImagesFunction).collect(Collectors.toSet());
+    public <T> Set<T> collectImages(Function<ImageProduct, T> collectFunction) {
+        return this.images.stream().map(collectFunction).collect(Collectors.toSet());
     }
 
     @Override
