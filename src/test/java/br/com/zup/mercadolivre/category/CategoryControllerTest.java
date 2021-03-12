@@ -12,8 +12,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import javax.transaction.Transactional;
 
 @SpringBootTest
@@ -28,17 +26,14 @@ class CategoryControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Autowired
-    private EntityManager em;
-
     @Test
     @DisplayName("It should create a new category")
     void mustCreateNewCategoryWithoutParent() throws Exception {
         CategoryRequest categoryRequest = new CategoryRequest("Category", null);
         mockMvc.perform(
                 MockMvcRequestBuilders.post("/categories")
-                    .content(objectMapper.writeValueAsString(categoryRequest))
-                    .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(categoryRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(MockMvcResultMatchers.status().isOk());
     }
 
@@ -63,11 +58,7 @@ class CategoryControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
         );
 
-        Query query = em.createQuery("select c from Category c", Category.class);
-        System.out.println(query.getResultList().size());
-
         CategoryRequest categoryRequest1 = new CategoryRequest("Futebol", categoryRequest.getCategoryId());
-        System.out.println(categoryRequest1.toString());
         mockMvc.perform(
                 MockMvcRequestBuilders.post("/categories")
                         .content(objectMapper.writeValueAsString(categoryRequest1))

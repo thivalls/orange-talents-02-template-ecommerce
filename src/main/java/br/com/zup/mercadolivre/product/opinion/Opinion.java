@@ -57,6 +57,22 @@ public class Opinion {
         return review;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public User getOwner() {
+        return owner;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
     @Override
     public String toString() {
         return "Opinion{" +

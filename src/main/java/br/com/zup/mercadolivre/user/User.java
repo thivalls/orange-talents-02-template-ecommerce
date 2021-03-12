@@ -53,6 +53,21 @@ public class User {
         return id;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+
+        User user = (User) o;
+
+        return getEmail().equals(user.getEmail());
+    }
+
+    @Override
+    public int hashCode() {
+        return getEmail().hashCode();
+    }
+
     public String getEmail() {
         return email;
     }

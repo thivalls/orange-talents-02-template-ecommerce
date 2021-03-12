@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "product_questions")
-public class Question {
+public class Question implements Comparable<Question>{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -48,6 +48,10 @@ public class Question {
         this.product = product;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
     @Override
     public String toString() {
         return "Question{" +
@@ -59,11 +63,36 @@ public class Question {
                 '}';
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Question)) return false;
+
+        Question question = (Question) o;
+
+        if (!getTitle().equals(question.getTitle())) return false;
+        if (!getOwner().equals(question.getOwner())) return false;
+        return getProduct().equals(question.getProduct());
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getTitle().hashCode();
+        result = 31 * result + getOwner().hashCode();
+        result = 31 * result + getProduct().hashCode();
+        return result;
+    }
+
     public User getOwner() {
         return owner;
     }
 
     public Product getProduct() {
         return product;
+    }
+
+    @Override
+    public int compareTo(Question o) {
+        return this.title.compareTo(o.title);
     }
 }

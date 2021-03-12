@@ -4,7 +4,10 @@ import br.com.zup.mercadolivre.product.Product;
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.util.Map;
+import java.util.OptionalDouble;
 import java.util.Set;
+import java.util.SortedSet;
 
 public class ProductDetailResponse {
     private String name;
@@ -13,12 +16,11 @@ public class ProductDetailResponse {
     private Set<ProductDetailResponseFeature> features;
 
     private Set<String> images;
-    private Set<ProductDetailResponseOpinion> opinions;
-//    private int totalReviews;
-//    private double averageReviews;
-//
-//    private List<Opinion> opnions;
-//    private List<Question> questions;
+    private SortedSet<String> questions;
+    private Set<Map<String, String>> opnions;
+
+    private Set<Integer> reviews;
+    private double averageReviews;
 
     public ProductDetailResponse(@NotNull Product product) {
         this.name = product.getName();
@@ -26,11 +28,13 @@ public class ProductDetailResponse {
         this.description = product.getDescription();
         this.features = product.collectFeatures(ProductDetailResponseFeature::new);
         this.images = product.collectImages(image -> image.getLink());
-//        this.opinios
-//        this.opnions = product.getOpinions();
-//        this.questions = product.getQuestions();
-//        this.totalReviews = opnions.size();
-//        this.averageReviews = getAverageReviews();
+        this.questions = product.collectQuestions(question -> question.getTitle());
+        this.opnions = product.collectOpnions(opinion -> {
+            return Map.of("title", opinion.getTitle(), "description", opinion.getDescription());
+        });
+        this.reviews = product.collectOpnions(opinion -> opinion.getReview());
+        OptionalDouble averageReviews = reviews.stream().mapToInt(review -> review).average();
+        this.averageReviews = averageReviews.orElseGet(() -> 0.0);
     }
 
     public String getName() {
@@ -53,24 +57,19 @@ public class ProductDetailResponse {
         return images;
     }
 
-    //    public int getTotalReviews() {
-//        return totalReviews;
-//    }
+    public SortedSet<String> getQuestions() {
+        return questions;
+    }
 
-//    public List<Opinion> getOpnions() {
-//        return opnions;
-//    }
-//
-//    public List<Question> getQuestions() {
-//        return questions;
-//    }
+    public Set<Map<String, String>> getOpnions() {
+        return opnions;
+    }
 
-//    private double getAverageReviews() {
-//        double average = 0.0;
-//        for (Opinion opinion : opnions) {
-//            average += opinion.getReview();
-//        }
-//        return this.averageReviews = average / totalReviews;
-//    }
+    public int getReviews() {
+        return reviews.size();
+    }
 
+    public double getAverageReviews() {
+        return averageReviews;
+    }
 }

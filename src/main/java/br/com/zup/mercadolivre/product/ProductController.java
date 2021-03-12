@@ -42,7 +42,7 @@ public class ProductController {
     @PostMapping
     @Transactional
     public String store(@RequestBody @Valid ProductRequest request) {
-        Optional<User> loggedUser = userRepository.findByEmail("admin1@email.com");
+        Optional<User> loggedUser = userRepository.findByEmail("admin@email.com");
         if (!loggedUser.isPresent()) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         Product product = request.toModel(em, loggedUser.get());
         em.persist(product);
@@ -61,6 +61,8 @@ public class ProductController {
          */
 
         Optional<User> loggedUser = userRepository.findByEmail("admin@email.com");
+        if(loggedUser.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+
         Product product = em.find(Product.class, id);
 
         Set<String> imageLinks = uploadFile.upload(request.getImages());

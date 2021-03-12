@@ -5,6 +5,7 @@ import br.com.zup.mercadolivre.product.detail.ProductDetailResponse;
 import br.com.zup.mercadolivre.product.detail.ProductDetailResponseFeature;
 import br.com.zup.mercadolivre.product.opinion.Opinion;
 import br.com.zup.mercadolivre.product.question.Question;
+import br.com.zup.mercadolivre.product.question.QuestionRequest;
 import br.com.zup.mercadolivre.user.User;
 import org.hibernate.validator.constraints.Length;
 
@@ -16,6 +17,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.Valid;
@@ -29,6 +31,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -73,10 +77,11 @@ public class Product {
     private Set<ImageProduct> images = new HashSet<>();
 
     @OneToMany(mappedBy = "product")
-    private List<Question> questions;
+    @OrderBy("title ASC")
+    private SortedSet<Question> questions = new TreeSet<>();
 
     @OneToMany(mappedBy = "product")
-    private List<Opinion> opinions;
+    private Set<Opinion> opinions = new HashSet<>();
 
     @Deprecated
     public Product() {
@@ -125,11 +130,11 @@ public class Product {
         return owner;
     }
 
-    public List<Question> getQuestions() {
+    public SortedSet<Question> getQuestions() {
         return questions;
     }
 
-    public List<Opinion> getOpinions() {
+    public Set<Opinion> getOpinions() {
         return opinions;
     }
 
@@ -150,19 +155,12 @@ public class Product {
         return this.images.stream().map(collectFunction).collect(Collectors.toSet());
     }
 
-    @Override
-    public String toString() {
-        return "Product{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", price=" + price +
-                ", quantity=" + quantity +
-                ", features=" + features +
-                ", description='" + description + '\'' +
-                ", categoria=" + categoria +
-                ", owner=" + owner +
-                ", images=" + images +
-                '}';
+    public <T extends Comparable<T>> SortedSet<T> collectQuestions(Function<Question, T> collectFunction) {
+        return this.questions.stream().map(collectFunction).collect(Collectors.toCollection(TreeSet::new));
+    }
+
+    public <T> Set<T> collectOpnions(Function<Opinion, T> collectFunction) {
+        return this.opinions.stream().map(collectFunction).collect(Collectors.toSet());
     }
 
     @Override

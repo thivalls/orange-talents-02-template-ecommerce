@@ -30,7 +30,7 @@ public class OpinionController {
     @PostMapping("/{id}/opinion")
     @Transactional
     public void store(@PathVariable("id") Long id, @RequestBody @Valid OpinionRequest request) {
-        Optional<User> loggedUser = userRepository.findByEmail("admin1@email.com");
+        Optional<User> loggedUser = userRepository.findByEmail("admin@email.com");
         if(!loggedUser.isPresent()) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
 
         Product product = em.find(Product.class, id);
