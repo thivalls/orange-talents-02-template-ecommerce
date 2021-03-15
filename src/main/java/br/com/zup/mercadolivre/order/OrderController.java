@@ -6,6 +6,7 @@ import br.com.zup.mercadolivre.user.User;
 import br.com.zup.mercadolivre.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,7 +33,7 @@ public class OrderController {
 
     @PostMapping
     @Transactional
-    public String store(@RequestBody @Valid OrderRequest request) {
+    public String store(@RequestBody @Valid OrderRequest request) throws BindException {
         Optional<User> user = userRepository.findByEmail("email@email.com");
         if(!user.isPresent()) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You must be logged in");
 
@@ -44,7 +45,7 @@ public class OrderController {
         Boolean stockDebit = product.applyStockDebit(request.getQuantity());
 
         if(stockDebit) {
-            try {
+//            try {
                 // em.merge(product);
                 em.persist(order);
                 emailService.send(
@@ -54,12 +55,15 @@ public class OrderController {
                         "server@mailtrap.io",
                         product.getOwner().getEmail()
                 );
-            } catch (Exception e) {
-                System.out.println(e);
-            }
+                return order.toString();
+//            } catch (Exception e) {
+//                System.out.println(e);
+//            }
         }
 
-        return order.toString();
+        BindException orderRequestStockError = new BindException(request, "orderRequest");
+        orderRequestStockError.reject(null, "There is not enough stock");
+        throw orderRequestStockError;
     }
 
 }
