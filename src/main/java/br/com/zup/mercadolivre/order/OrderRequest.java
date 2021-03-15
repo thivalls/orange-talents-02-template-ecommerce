@@ -30,10 +30,7 @@ public class OrderRequest {
         this.quantity = quantity;
     }
 
-    public Order toModel(EntityManager em, User buyer) {
-        Product product = em.find(Product.class, productId);
-        if (product == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Product not found");
-
+    public Order toModel(Product product, User buyer) {
         return new Order(paymentGateway, product, quantity, buyer);
     }
 

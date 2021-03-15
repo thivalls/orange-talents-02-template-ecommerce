@@ -2,6 +2,8 @@ package br.com.zup.mercadolivre.order;
 
 import br.com.zup.mercadolivre.product.Product;
 import br.com.zup.mercadolivre.user.User;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

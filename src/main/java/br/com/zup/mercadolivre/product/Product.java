@@ -5,6 +5,9 @@ import br.com.zup.mercadolivre.product.opinion.Opinion;
 import br.com.zup.mercadolivre.product.question.Question;
 import br.com.zup.mercadolivre.user.User;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.http.HttpStatus;
+import org.springframework.util.Assert;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -19,6 +22,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.math.BigDecimal;
 import java.util.Collection;
@@ -155,6 +159,16 @@ public class Product {
 
     public <T> Set<T> collectOpnions(Function<Opinion, T> collectFunction) {
         return this.opinions.stream().map(collectFunction).collect(Collectors.toSet());
+    }
+
+    public Boolean applyStockDebit(@Positive int quantity) {
+        Assert.isTrue(quantity > 0, "The quantity cannot be less than or equal to zero");
+        // Assert.isTrue(quantity > this.getQuantity(), "There is not enough stock to debit");
+        if(this.quantity >= quantity) {
+            this.quantity -= quantity;
+            return true;
+        }
+        return false;
     }
 
     @Override
