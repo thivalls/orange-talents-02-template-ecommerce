@@ -1,16 +1,12 @@
 package br.com.zup.mercadolivre.product;
 
 import br.com.zup.mercadolivre.category.Category;
-import br.com.zup.mercadolivre.product.detail.ProductDetailResponse;
-import br.com.zup.mercadolivre.product.detail.ProductDetailResponseFeature;
 import br.com.zup.mercadolivre.product.opinion.Opinion;
 import br.com.zup.mercadolivre.product.question.Question;
-import br.com.zup.mercadolivre.product.question.QuestionRequest;
 import br.com.zup.mercadolivre.user.User;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -24,11 +20,9 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
-import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
@@ -67,7 +61,7 @@ public class Product {
 
     @NotNull
     @ManyToOne
-    private Category categoria;
+    private Category category;
 
     @NotNull
     @ManyToOne
@@ -87,12 +81,12 @@ public class Product {
     public Product() {
     }
 
-    public Product(@NotBlank String name, @NotNull BigDecimal price, @NotBlank @PositiveOrZero Integer quantity, @NotBlank @Length(max = 1000) String description, @NotNull Category categoria, @NotNull @Valid User owner, Collection<ProductFeatureRequest> featureCollection) {
+    public Product(@NotBlank String name, @NotNull BigDecimal price, @NotBlank @PositiveOrZero Integer quantity, @NotBlank @Length(max = 1000) String description, @NotNull Category category, @NotNull @Valid User owner, Collection<ProductFeatureRequest> featureCollection) {
         this.name = name;
         this.price = price;
         this.quantity = quantity;
         this.description = description;
-        this.categoria = categoria;
+        this.category = category;
         this.owner = owner;
         this.features.addAll(featureCollection.stream().map(feature -> feature.toModel(this)).collect(Collectors.toSet()));
         featureCollection.stream().map(feature -> feature.toModel(this));
@@ -122,8 +116,8 @@ public class Product {
         return description;
     }
 
-    public Category getCategoria() {
-        return categoria;
+    public Category getCategory() {
+        return category;
     }
 
     public User getOwner() {
