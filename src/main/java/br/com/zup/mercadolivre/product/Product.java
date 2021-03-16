@@ -163,7 +163,6 @@ public class Product {
 
     public Boolean applyStockDebit(@Positive int quantity) {
         Assert.isTrue(quantity > 0, "The quantity cannot be less than or equal to zero");
-        // Assert.isTrue(quantity > this.getQuantity(), "There is not enough stock to debit");
         if(this.quantity >= quantity) {
             this.quantity -= quantity;
             return true;

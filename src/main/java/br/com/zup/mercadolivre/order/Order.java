@@ -1,5 +1,6 @@
 package br.com.zup.mercadolivre.order;
 
+import br.com.zup.mercadolivre.payment.ReturnPagseguroRequest;
 import br.com.zup.mercadolivre.product.Product;
 import br.com.zup.mercadolivre.user.User;
 import org.springframework.http.HttpStatus;
@@ -86,5 +87,9 @@ public class Order {
                 + ", \"quantity\":\"" + quantity + "\""
                 + ", \"buyer\":" + buyer
                 + "}}";
+    }
+
+    public void tryPayment(ReturnPagseguroRequest request) {
+
     }
 }
