@@ -3,6 +3,7 @@ package br.com.zup.mercadolivre.product;
 import br.com.zup.mercadolivre.user.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -28,13 +29,5 @@ class ProductControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-//    @Test
-//    void deveEncontrarRotaPostProducts() throws Exception {
-//        ProductRequest product = new ProductRequest();
-//        mockMvc.perform(
-//                MockMvcRequestBuilders.post("/products")
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(objectMapper.writeValueAsString(product))
-//        ).andExpect(MockMvcResultMatchers.status().isOk());
-//    }
+
 }
