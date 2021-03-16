@@ -29,7 +29,7 @@ class OrderControllerTest {
     @Test
     @DisplayName("It should create a new order with correct data")
     void itShouldCreateNewOrderWithCorrectData() throws Exception {
-        OrderRequest orderRequest = new OrderRequest("PAYPAL", 1L, 2);
+        OrderRequest orderRequest = new OrderRequest(Gateway.PAYPAL, 1L, 2);
         mockMvc.perform(
             MockMvcRequestBuilders.post("/orders")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -40,7 +40,7 @@ class OrderControllerTest {
     @Test
     @DisplayName("It should not create a new order with a non existent product")
     void itShouldNotCreateNewOrderWithNonExistentProduct() throws Exception {
-        OrderRequest orderRequest = new OrderRequest("PAYPAL", 10L, 2);
+        OrderRequest orderRequest = new OrderRequest(Gateway.PAYPAL, 10L, 2);
         mockMvc.perform(
                 MockMvcRequestBuilders.post("/orders")
                         .contentType(MediaType.APPLICATION_JSON)

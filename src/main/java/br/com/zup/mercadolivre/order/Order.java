@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -25,8 +26,9 @@ public class Order {
 
     @NotBlank
     private String status;
-    @NotBlank
-    private String paymentGateway;
+    @Enumerated
+    @NotNull
+    private Gateway paymentGateway;
 
     @NotNull
     @ManyToOne
@@ -42,12 +44,36 @@ public class Order {
     @JoinColumn(name = "buyer_id")
     private User buyer;
 
-    public Order(@NotBlank String paymentGateway, @NotNull Product product, @Positive @NotNull int quantity, @NotNull User buyer) {
+    public Order(@NotNull Gateway paymentGateway, @NotNull Product product, @Positive @NotNull int quantity, @NotNull User buyer) {
         this.status = OrderStatus.STARTED.toString();
         this.paymentGateway = paymentGateway;
         this.product = product;
         this.quantity = quantity;
         this.buyer = buyer;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public Gateway getPaymentGateway() {
+        return paymentGateway;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public User getBuyer() {
+        return buyer;
     }
 
     @Override

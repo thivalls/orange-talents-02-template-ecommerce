@@ -13,8 +13,8 @@ import javax.validation.constraints.Positive;
 
 public class OrderRequest {
 
-    @NotBlank
-    private String paymentGateway;
+    @NotNull
+    private Gateway paymentGateway;
 
     @NotNull
     @ExistField(domainClass = Product.class, fieldName = "id", message = "Product not found")
@@ -24,17 +24,17 @@ public class OrderRequest {
     @NotNull
     private int quantity;
 
-    public OrderRequest(String paymentGateway, @NotNull Long productId, @Positive @NotNull int quantity) {
+    public OrderRequest(@NotNull Gateway paymentGateway, @NotNull Long productId, @Positive @NotNull int quantity) {
         this.paymentGateway = paymentGateway;
         this.productId = productId;
         this.quantity = quantity;
     }
 
-    public Order toModel(Product product, User buyer) {
-        return new Order(paymentGateway, product, quantity, buyer);
+    public Order toModel(Gateway paymentGateway, Product product, User buyer) {
+        return new Order(this.paymentGateway, product, quantity, buyer);
     }
 
-    public String getPaymentGateway() {
+    public Gateway getPaymentGateway() {
         return paymentGateway;
     }
 

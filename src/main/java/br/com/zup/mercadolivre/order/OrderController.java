@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -33,20 +34,20 @@ public class OrderController {
 
     @PostMapping
     @Transactional
-    public String store(@RequestBody @Valid OrderRequest request) throws BindException {
+    public String store(@RequestBody @Valid OrderRequest request, UriComponentsBuilder uriComponentsBuilder) throws BindException {
         Optional<User> user = userRepository.findByEmail("email@email.com");
         if(!user.isPresent()) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You must be logged in");
 
         Product product = em.find(Product.class, request.getProductId());
         if(product == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Product not found");
 
-        Order order = request.toModel(product, user.get());
+        Order order = request.toModel(request.getPaymentGateway(), product, user.get());
 
         Boolean stockDebit = product.applyStockDebit(request.getQuantity());
 
         if(stockDebit) {
 //            try {
-                // em.merge(product);
+                // em.merge(product); o hibernate jpa já faz a sincronização da alteração do produto, não preciso dar o merge senão a ação será feita duas vezes
                 em.persist(order);
                 emailService.send(
                         "Ei, " + product.getOwner().getEmail() + " a new order has been created for product " + product.getName() + " do not forget to check it out!",
@@ -55,7 +56,13 @@ public class OrderController {
                         "server@mailtrap.io",
                         product.getOwner().getEmail()
                 );
-                return order.toString();
+                if(request.getPaymentGateway().equals(Gateway.PAGSEGURO)) {
+                    String urlPagseguro = uriComponentsBuilder.path("/retorno-pagseguro/{id}").buildAndExpand(order.getId()).toString();
+                    return "pagseguro.com/" + order.getId() + "?redirectUrl=" + urlPagseguro;
+                }else {
+                    String urlPaypal = uriComponentsBuilder.path("/retorno-paypal/{id}").buildAndExpand(order.getId()).toString();
+                    return "paypal.com/" + order.getId() + "?redirectUrl=" + urlPaypal;
+                }
 //            } catch (Exception e) {
 //                System.out.println(e);
 //            }
