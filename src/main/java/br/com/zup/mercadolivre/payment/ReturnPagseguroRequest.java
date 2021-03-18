@@ -1,7 +1,6 @@
 package br.com.zup.mercadolivre.payment;
 
 import br.com.zup.mercadolivre.order.Order;
-import br.com.zup.mercadolivre.shared.validations.ExistField;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -11,18 +10,22 @@ public class ReturnPagseguroRequest {
     private String transactionId;
 
     @NotNull
-    private PagseguroReturnStatus gatewayStatus; // success or fail Paypal(0,1) Pagseguro(SUCCESS, FAIL)
+    private PagseguroReturnStatus pagseguroReturnStatus; // success or fail Paypal(0,1) Pagseguro(SUCCESS, FAIL)
 
-    public ReturnPagseguroRequest(@NotBlank String transactionId, @NotBlank PagseguroReturnStatus gatewayStatus) {
+    public ReturnPagseguroRequest(@NotBlank String transactionId, @NotNull PagseguroReturnStatus pagseguroReturnStatus) {
         this.transactionId = transactionId;
-        this.gatewayStatus = gatewayStatus;
+        this.pagseguroReturnStatus = pagseguroReturnStatus;
     }
 
     @Override
     public String toString() {
-        return "{\"ReturnPagseguroRequest\":{"
-                + "\"transactionId\":\"" + transactionId + "\""
-                + ", \"gatewayStatus\":\"" + gatewayStatus + "\""
-                + "}}";
+        return "ReturnPagseguroRequest{" +
+                "orderId='" + transactionId + '\'' +
+                ", pagseguroReturnStatus=" + pagseguroReturnStatus +
+                '}';
+    }
+
+    public Transaction toTransaction(Order order) {
+        return new Transaction(pagseguroReturnStatus.normalize(), transactionId, order);
     }
 }
