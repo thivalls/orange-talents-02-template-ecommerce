@@ -1,6 +1,9 @@
 package br.com.zup.mercadolivre.payment;
 
+import br.com.zup.mercadolivre.external.NfService;
+import br.com.zup.mercadolivre.external.RankingService;
 import br.com.zup.mercadolivre.order.Order;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +19,12 @@ public class ProcessPaymentController {
 
     @PersistenceContext
     private EntityManager em;
+
+    @Autowired
+    private NfService nfService;
+
+    @Autowired
+    private RankingService rankingService;
 
     @PostMapping("/return-pagseguro/{orderId}")
     @Transactional
@@ -34,6 +43,14 @@ public class ProcessPaymentController {
         Assert.notNull(order, "Order not found");
         order.addTransaction(request);
         em.merge(order);
+        if(order.processedWithSuccess()) {
+            // falar com nota fiscal
+            nfService.processa(order);
+            // falar com ranking
+            rankingService.processa(order);
+            // mandar email para quem comprou
+            // emailTransaction.processa(order);
+        }
         return order.toString();
     }
 }

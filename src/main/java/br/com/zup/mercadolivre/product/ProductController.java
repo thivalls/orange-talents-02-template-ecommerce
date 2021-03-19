@@ -42,7 +42,7 @@ public class ProductController {
     @PostMapping
     @Transactional
     public String store(@RequestBody @Valid ProductRequest request) {
-        Optional<User> loggedUser = userRepository.findByEmail("admin@email.com");
+        Optional<User> loggedUser = userRepository.findByEmail("email@email.com");
         if (!loggedUser.isPresent()) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         Product product = request.toModel(em, loggedUser.get());
         em.persist(product);

@@ -25,6 +25,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/orders").permitAll()
                 .antMatchers(HttpMethod.POST, "/return-paypal/{idTransaction}").permitAll()
                 .antMatchers(HttpMethod.POST, "/return-pagseguro/{idTransaction}").permitAll()
+                .antMatchers(HttpMethod.POST, "/external/services/**").permitAll()
                 .anyRequest().authenticated()
                 .and().csrf().disable();
     }

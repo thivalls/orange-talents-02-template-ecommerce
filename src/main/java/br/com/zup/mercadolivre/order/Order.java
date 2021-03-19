@@ -107,8 +107,18 @@ public class Order {
     public void addTransaction(@Valid IGatewayRequest request) {
         Transaction transaction = request.toTransaction(this);
         Assert.isTrue(!this.transactions.contains(transaction), "This transaction already been added");
-        Set<Transaction> successTransaction = this.transactions.stream().filter(Transaction::checkSuccessTransaction).collect(Collectors.toSet());
-        Assert.isTrue(successTransaction.isEmpty(), "This transaction already been finished with success");
+        Assert.isTrue(transactionsWithSuccess().isEmpty(), "This transaction already been finished with success");
         this.transactions.add(request.toTransaction(this));
+    }
+
+    public boolean processedWithSuccess() {
+        return !transactionsWithSuccess().isEmpty();
+    }
+
+    private Set<Transaction> transactionsWithSuccess() {
+        Set<Transaction> transactions = this.transactions.stream().filter(Transaction::checkSuccessTransaction).collect(Collectors.toSet());
+
+        Assert.isTrue(transactions.size() <=1, "Bug reported. Only one transaction can be processed with success");
+        return transactions;
     }
 }
