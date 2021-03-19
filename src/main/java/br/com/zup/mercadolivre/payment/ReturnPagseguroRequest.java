@@ -5,7 +5,7 @@ import br.com.zup.mercadolivre.order.Order;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-public class ReturnPagseguroRequest {
+public class ReturnPagseguroRequest implements IGatewayRequest{
     @NotBlank
     private String transactionId;
 

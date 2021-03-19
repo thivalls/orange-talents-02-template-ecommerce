@@ -20,6 +20,16 @@ public class ProcessPaymentController {
     @PostMapping("/return-pagseguro/{orderId}")
     @Transactional
     public String storePagseguro(@PathVariable("orderId") Long orderId, @Valid ReturnPagseguroRequest request) {
+        return runTransaction(orderId, request);
+    }
+
+    @PostMapping("/return-paypal/{orderId}")
+    @Transactional
+    public String storePaypal(@PathVariable("orderId") Long orderId, @Valid ReturnPaypalRequest request) {
+        return runTransaction(orderId, request);
+    }
+
+    private String runTransaction(Long orderId, IGatewayRequest request) {
         Order order = em.find(Order.class, orderId);
         Assert.notNull(order, "Order not found");
         order.addTransaction(request);

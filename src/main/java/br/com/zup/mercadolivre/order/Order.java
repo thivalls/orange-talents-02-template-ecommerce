@@ -1,12 +1,11 @@
 package br.com.zup.mercadolivre.order;
 
+import br.com.zup.mercadolivre.payment.IGatewayRequest;
 import br.com.zup.mercadolivre.payment.ReturnPagseguroRequest;
 import br.com.zup.mercadolivre.payment.Transaction;
 import br.com.zup.mercadolivre.product.Product;
 import br.com.zup.mercadolivre.user.User;
-import org.springframework.http.HttpStatus;
 import org.springframework.util.Assert;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -105,7 +104,7 @@ public class Order {
                 '}';
     }
 
-    public void addTransaction(@Valid ReturnPagseguroRequest request) {
+    public void addTransaction(@Valid IGatewayRequest request) {
         Transaction transaction = request.toTransaction(this);
         Assert.isTrue(!this.transactions.contains(transaction), "This transaction already been added");
         Set<Transaction> successTransaction = this.transactions.stream().filter(Transaction::checkSuccessTransaction).collect(Collectors.toSet());
