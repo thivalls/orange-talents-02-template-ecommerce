@@ -21,6 +21,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -53,7 +54,7 @@ public class Order {
     private User buyer;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.MERGE)
-    private List<Transaction> transactions;
+    private List<Transaction> transactions = new ArrayList<>();
 
     @Deprecated
     public Order() {
@@ -106,8 +107,8 @@ public class Order {
 
     public void addTransaction(@Valid IGatewayRequest request) {
         Transaction transaction = request.toTransaction(this);
-        Assert.isTrue(!this.transactions.contains(transaction), "This transaction already been added");
-        Assert.isTrue(transactionsWithSuccess().isEmpty(), "This transaction already been finished with success");
+        Assert.state(!this.transactions.contains(transaction), "This transaction already been added");
+        Assert.state(transactionsWithSuccess().isEmpty(), "This transaction already been finished with success");
         this.transactions.add(request.toTransaction(this));
     }
 
